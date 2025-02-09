@@ -1,0 +1,45 @@
+@startuml
+title Fluxo Completo do Processamento de Mensagens Kafka
+
+start
+
+:Kafka envia a mensagem (ConsumerRecord) para o consumidor;
+
+:DefaultKafkaConsumer.receive(consumerRecords, acknowledgment);
+note right
+  Recebe uma lista de mensagens e o objeto de acknowledgment
+end note
+
+:Para cada ConsumerRecord, executar de forma assíncrona;
+fork
+  :Chamar KafkaConsumerService.process(consumerRecord);
+fork again
+  :Aguardar conclusão de todos os processamentos assíncronos;
+end fork
+
+:No método process(ConsumerRecord):
+  :Extrair headers da mensagem;
+  :Adicionar global markers e correlator (via @AddCorrelator);
+  :Adaptar e converter o valor da mensagem para objeto usando Converter;
+  :Validar o objeto (se validateEvent=true);
+  :Executar handlers BEFORE (HandlerBeforeInsert);
+  :Chamar IngestService.ingest(objeto);
+  :Executar handlers AFTER (HandlerAfterInsert);
+
+if (Processamento sem erro?) then (sim)
+  :Registrar log de sucesso;
+else (erro)
+  :Capturar exceção e tratar erro;
+  if (Erro é Retryable?) then (sim)
+    :Incrementar retry count nos headers;
+    :Enviar mensagem para RetryTopic via KafkaProducer;
+  else (não)
+    :Enviar mensagem para DLQ via KafkaProducer;
+  endif
+endif
+
+:Reconhecer (ack) a mensagem processada;
+:Resetar FlowControl e limpar contexto;
+
+stop
+@enduml

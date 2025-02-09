@@ -1,0 +1,64 @@
+@startuml
+actor Thread
+entity FlowControl
+entity FlowConfig
+entity FlowThreadContext
+
+== Inicialização do Fluxo ==
+Thread -> FlowControl : start()
+activate FlowControl
+FlowControl -> FlowThreadContext : setStartTime(currentTimeMillis)
+activate FlowThreadContext
+FlowThreadContext --> FlowControl :
+deactivate FlowThreadContext
+FlowControl -> FlowThreadContext : setProcessedEvents(0)
+FlowThreadContext --> FlowControl :
+deactivate FlowThreadContext
+
+== Processamento de Eventos ==
+loop Processando Eventos
+    alt isActivated and processedEvents != 0
+        FlowControl -> FlowThreadContext : getStartTime()
+        activate FlowThreadContext
+        FlowThreadContext --> FlowControl : startTime
+        deactivate FlowThreadContext
+
+        FlowControl -> FlowThreadContext : getProcessedEvents()
+        activate FlowThreadContext
+        FlowThreadContext --> FlowControl : processedEvents
+        deactivate FlowThreadContext
+
+        FlowControl -> FlowConfig : getMinTimeMs()
+        activate FlowConfig
+        FlowConfig --> FlowControl : minTimeMs
+        deactivate FlowConfig
+
+        FlowControl -> FlowConfig : getMaxDataPerThread()
+        activate FlowConfig
+        FlowConfig --> FlowControl : maxDataPerThread
+        deactivate FlowConfig
+
+        FlowControl -> FlowControl : timeDifference = currentTimeMillis() - startTime
+        FlowControl -> FlowControl : timeLeft = minTimeMs - timeDifference
+
+        alt timeLeft > 0 and processedEvents < maxDataPerThread and timeDifference < minTimeMs
+            FlowControl -> FlowControl : eventsLeftToProcess = maxDataPerThread - processedEvents
+            FlowControl -> FlowControl : sleepTime = timeLeft / eventsLeftToProcess
+
+            FlowControl -> Thread : sleep(sleepTime)
+            Thread --> FlowControl :
+        end
+        Thread -> FlowControl : reset()
+        FlowControl -> FlowThreadContext : setProcessedEvents(newCount)
+        FlowThreadContext --> FlowControl :
+        deactivate FlowThreadContext
+        alt shouldReset
+            FlowControl -> FlowThreadContext : remove()
+            deactivate FlowControl
+        end
+    end
+end
+
+FlowControl --> Thread :
+deactivate FlowControl
+@enduml

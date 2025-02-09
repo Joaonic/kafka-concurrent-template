@@ -1,0 +1,150 @@
+@startuml
+' Diagrama de Classes para a LIB Data Sync Kafka (versão corrigida)
+
+' ========= INTERFACES =========
+interface Converter {
+  + convert(value: String) : Object
+}
+
+interface HandlerBeforeInsert {
+  + handle(document: Object, objects: Object...) : void
+}
+
+interface HandlerAfterInsert {
+  + handle(document: Object, objects: Object...) : void
+}
+
+interface IngestService {
+  + ingest(value: Object) : Object
+}
+
+' ========= IMPLEMENTAÇÕES =========
+class "DefaultConverter" {
+  - objectMapper : ObjectMapper
+  - clazz : Class
+  + DefaultConverter(objectMapper: ObjectMapper, clazz: Class)
+  + convert(value: String) : Object
+}
+DefaultConverter ..|> Converter
+
+' ========= CONFIGURAÇÕES =========
+class KafkaConsumerProperties {
+  - validateEvent : boolean
+  - retryAttempts : int
+  - topics : List<String>
+  - retryTopic : String
+  - dlqTopic : String
+}
+
+' ========= ANOTAÇÕES =========
+' Representação das anotações como classes estereotipadas
+abstract class KafkaIngestConsumer << (A,#FFAAAA) >> {
+  + topics() : String[]
+  + groupId() : String
+  + retryTopic() : String
+  + dlqTopic() : String
+  + retryAttempts() : int
+  + validateEvent() : boolean
+}
+
+abstract class EnableDataSyncKafka << (A,#FFAAAA) >>
+abstract class AddCorrelator << (A,#FFAAAA) >>
+
+' ========= CONFIGURAÇÃO AUTOMÁTICA =========
+class AutoKafkaConsumerConfiguration {
+  - applicationContext : ApplicationContext
+  - kafkaProducer : KafkaProducer
+  - flowControl : FlowControl
+  - objectMapper : ObjectMapper
+  - environment : Environment
+  + configureKafkaListeners(registrar: KafkaListenerEndpointRegistrar) : void
+}
+
+class KafkaAutoConfig {
+  + messageHandlerMethodFactory() : MessageHandlerMethodFactory
+  + kafkaProducer(kafkaTemplate: KafkaTemplate<String, String>, mapperService: MapperService) : KafkaProducer
+}
+
+' ========= PRODUTOR =========
+class KafkaProducer {
+  - kafkaTemplate : KafkaTemplate<String, String>
+  - mapperService : MapperService
+  + sendMessages(message: String, topic: String) : void
+  + sendMessages(message: String, topic: String, headers: Map<String, String>) : void
+  + sendDocument(document: Object, topic: String) : void
+  + sendDocument(document: Object, topic: String, headers: Map<String, String>) : void
+}
+
+' ========= AOP =========
+class CorrelatorAop {
+  + handleCorrelator(joinPoint: JoinPoint, advice: AddCorrelator) : void
+}
+
+' ========= UTILITÁRIOS =========
+class Constant {
+  {static} + RETRY_COUNT : String
+  {static} + FIRST_ARRIVAL_DATE : String
+  {static} + RETRY_LOG : String
+  {static} + DLQ_LOG : String
+  {static} + RETRY_TOPIC : String
+  {static} + KAFKA_HEADERS : String
+}
+
+class ConsumerThreadContext {
+  - consumerRecord : ConsumerRecord<String, String>
+  - parsedObject : Object
+  - parsedHeaders : Map<String, String>
+}
+
+' ========= CONSUMIDORES =========
+abstract class KafkaConsumer {
+  - kafkaConsumerService : KafkaConsumerService
+  - executor : ExecutorService
+  + receive(consumerRecords: List<ConsumerRecord<String, String>>, acknowledgment: Acknowledgment) : void
+  + processAsync(consumerRecord: ConsumerRecord<String, String>) : CompletableFuture<Boolean>
+}
+
+class DefaultKafkaConsumer {
+  + DefaultKafkaConsumer(consumerService: KafkaConsumerService, consumerName: String)
+}
+DefaultKafkaConsumer --|> KafkaConsumer
+
+' ========= SERVIÇO DE CONSUMO =========
+class KafkaConsumerService {
+  - producerService : KafkaProducer
+  - flowControl : FlowControl
+  - properties : KafkaConsumerProperties
+  - ingestService : IngestService
+  - converter : Converter
+  - handlersAfterList : List<HandlerAfterInsert>
+  - handlersBeforeList : List<HandlerBeforeInsert>
+  + process(consumerRecord: ConsumerRecord<String, String>) : boolean
+  + sendToQueue() : void
+  + sendToDlq() : void
+}
+
+' ========= EXEMPLO DE IMPLEMENTAÇÃO =========
+class OrderIngestService {
+  + ingest(value: Order) : Order
+}
+OrderIngestService ..|> IngestService
+OrderIngestService ..> KafkaIngestConsumer
+
+' ========= RELACIONAMENTOS =========
+AutoKafkaConsumerConfiguration ..> KafkaProducer : uses
+AutoKafkaConsumerConfiguration ..> FlowControl : uses
+AutoKafkaConsumerConfiguration ..> KafkaConsumerService : creates
+
+KafkaConsumerService ..> KafkaProducer : uses
+KafkaConsumerService ..> KafkaConsumerProperties : uses
+KafkaConsumerService ..> IngestService : delegates
+KafkaConsumerService ..> Converter : uses
+KafkaConsumerService ..> HandlerBeforeInsert : uses
+KafkaConsumerService ..> HandlerAfterInsert : uses
+
+KafkaAutoConfig ..> KafkaProducer : creates
+KafkaAutoConfig ..> AutoKafkaConsumerConfiguration : imports
+
+EnableDataSyncKafka ..> KafkaAutoConfig : imports
+
+@enduml

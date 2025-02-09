@@ -1,0 +1,54 @@
+<configuration>
+    <!-- Inclui configurações padrão do Spring Boot -->
+    <include resource="org/springframework/boot/logging/logback/defaults.xml" />
+
+    <!-- Propriedades do Spring -->
+    <springProperty scope="local" name="log_path" source="think-growth.logs.path" defaultValue="./logs"/>
+    <springProperty scope="local" name="app_name" source="think-growth.logs.application.name" defaultValue="log"/>
+
+    <!-- Appender para console -->
+    <appender name="CONSOLE_APPENDER" class="ch.qos.logback.core.ConsoleAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>TRACE</level>
+        </filter>
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <Pattern>%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(%-5p) %clr(${PID}){magenta} %clr(---){faint} %clr([%15.15t]){cyan} %clr(%-40.40logger{0}){blue} %clr(:){red} %clr(%m){faint} %highlight(%magenta([%marker])) %n</Pattern>
+        </layout>
+    </appender>
+
+    <!-- Appender para arquivo NDJSON com rotação -->
+    <appender name="NDJSON_FILE_APPENDER" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${log_path}/${app_name}.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+            <fileNamePattern>${log_path}/${app_name}.%i.log</fileNamePattern>
+            <minIndex>1</minIndex>
+            <maxIndex>3</maxIndex>
+        </rollingPolicy>
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <maxFileSize>100MB</maxFileSize>
+        </triggeringPolicy>
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+            <fieldNames>
+                <timestamp>instant</timestamp>
+                <thread>thread</thread>
+                <version>[ignore]</version>
+                <levelValue>[ignore]</levelValue>
+            </fieldNames>
+            <includeMdcKeyName>OPERATION_ID</includeMdcKeyName>
+            <customFields>{"app_name": "${app_name}"}</customFields>
+        </encoder>
+    </appender>
+
+    <!-- Configurações comuns de logging sem níveis definidos -->
+    <springProfile name="default, dev, local, test, prod">
+        <root>
+            <appender-ref ref="NDJSON_FILE_APPENDER"/>
+            <appender-ref ref="CONSOLE_APPENDER"/>
+        </root>
+
+        <logger name="br.thinkgrowth" additivity="false">
+            <appender-ref ref="NDJSON_FILE_APPENDER"/>
+            <appender-ref ref="CONSOLE_APPENDER"/>
+        </logger>
+    </springProfile>
+</configuration>

@@ -1,0 +1,46 @@
+@startuml
+class FlowThreadContext {
+    - startTime: long
+    - processedEvents: int
+    + setStartTime(startTime: long): void
+    + getStartTime(): long
+    + setProcessedEvents(processedEvents: int): void
+    + getProcessedEvents(): int
+}
+
+class FlowConfig {
+    - properties: FlowProperties
+    - maxDataPerThread: Integer
+    - minTimeMs: Long
+    + afterPropertiesSet(): void
+    + flowControl(): FlowControl
+}
+
+class FlowControl {
+    - flowConfig: FlowConfig
+    - threadContext: ThreadLocal<FlowThreadContext>
+    + start(): void
+    + context(): FlowThreadContext
+    + isActivated(): boolean
+    + stopFlow(): void
+    + reset(): void
+    + destroy(): void
+}
+
+class FlowProperties {
+    - activated: boolean
+    - maxData: int
+    - threadsNumber: int
+    - minTime: long
+    - timeUnit: TimeUnit
+    + isActivated(): boolean
+    + getMaxData(): int
+    + getThreadsNumber(): int
+    + getMinTime(): long
+    + getTimeUnit(): TimeUnit
+}
+
+FlowControl "1" -- "1" FlowConfig : uses >
+FlowConfig "1" -- "1" FlowProperties : uses >
+FlowControl ..> FlowThreadContext : uses >
+@enduml
