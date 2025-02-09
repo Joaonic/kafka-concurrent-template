@@ -1,4 +1,4 @@
-package br.gft.template.demo.logs.marker;
+package br.gft.template.demo.logs;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

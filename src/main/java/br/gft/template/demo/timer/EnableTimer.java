@@ -1,6 +1,6 @@
-package br.gft.template.demo.shared.timer;
+package br.gft.template.demo.timer;
 
-import br.gft.template.demo.shared.timer.aop.TimerAop;
+import br.gft.template.demo.timer.aop.TimerAop;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Import;
 

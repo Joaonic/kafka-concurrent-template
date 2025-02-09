@@ -3,8 +3,8 @@
     <include resource="org/springframework/boot/logging/logback/defaults.xml" />
 
     <!-- Propriedades do Spring -->
-    <springProperty scope="local" name="log_path" source="think-growth.logs.path" defaultValue="./logs"/>
-    <springProperty scope="local" name="app_name" source="think-growth.logs.application.name" defaultValue="log"/>
+    <springProperty scope="local" name="log_path" source="gft.logs.path" defaultValue="./logs"/>
+    <springProperty scope="local" name="app_name" source="gft.logs.application.name" defaultValue="log"/>
 
     <!-- Appender para console -->
     <appender name="CONSOLE_APPENDER" class="ch.qos.logback.core.ConsoleAppender">
@@ -39,16 +39,13 @@
         </encoder>
     </appender>
 
-    <!-- Configurações comuns de logging sem níveis definidos -->
-    <springProfile name="default, dev, local, test, prod">
-        <root>
-            <appender-ref ref="NDJSON_FILE_APPENDER"/>
-            <appender-ref ref="CONSOLE_APPENDER"/>
-        </root>
+    <root>
+        <appender-ref ref="NDJSON_FILE_APPENDER"/>
+        <appender-ref ref="CONSOLE_APPENDER"/>
+    </root>
 
-        <logger name="br.thinkgrowth" additivity="false">
-            <appender-ref ref="NDJSON_FILE_APPENDER"/>
-            <appender-ref ref="CONSOLE_APPENDER"/>
-        </logger>
-    </springProfile>
+    <logger name="br.gft" additivity="false">
+        <appender-ref ref="NDJSON_FILE_APPENDER"/>
+        <appender-ref ref="CONSOLE_APPENDER"/>
+    </logger>
 </configuration>

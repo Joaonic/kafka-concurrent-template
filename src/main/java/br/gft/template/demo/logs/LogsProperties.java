@@ -1,4 +1,4 @@
-package br.gft.template.demo.logs.config;
+package br.gft.template.demo.logs;
 
 
 import lombok.Data;

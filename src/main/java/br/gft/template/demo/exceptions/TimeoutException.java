@@ -1,6 +1,6 @@
 package br.gft.template.demo.exceptions;
 
-public class TimeoutException extends BaseException {
+public class TimeoutException extends RetryableException {
 
     public static final String KEY = "exceptions.rest.timeout";
 

@@ -1,4 +1,4 @@
-package br.gft.template.demo.shared.mapper.json;
+package br.gft.template.demo.mapper.json;
 
 
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;

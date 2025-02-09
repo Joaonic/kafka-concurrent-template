@@ -1,4 +1,4 @@
-package br.gft.template.demo.shared.timer;
+package br.gft.template.demo.timer;
 
 import org.springframework.core.annotation.AliasFor;
 

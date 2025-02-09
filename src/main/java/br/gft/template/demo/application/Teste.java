@@ -1,4 +1,4 @@
 package br.gft.template.demo.application;
 
-public record Teste() {
+public record Teste(String teste) {
 }

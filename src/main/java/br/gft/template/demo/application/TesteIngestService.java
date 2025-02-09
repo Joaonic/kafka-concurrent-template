@@ -1,12 +1,12 @@
 package br.gft.template.demo.application;
 
 import br.gft.template.demo.events.IngestService;
-import br.gft.template.demo.events.kafka.KafkaIngestConsumer;
+
+import br.gft.template.demo.events.kafka.concurrent.config.KafkaIngestConsumer;
 import org.springframework.stereotype.Service;
 
 @KafkaIngestConsumer(
     topics = {"meu-topico"},
-    groupId = "grupo-teste",
     retryTopic = "meu-retry-topico",
     dlqTopic = "meu-dlq-topico",
     retryAttempts = 5,

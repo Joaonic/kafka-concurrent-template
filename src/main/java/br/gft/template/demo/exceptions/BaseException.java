@@ -2,36 +2,36 @@ package br.gft.template.demo.exceptions;
 
 import java.util.ResourceBundle;
 
-public class BaseException extends RuntimeException {
-    private static final ResourceBundle messages = ResourceBundle.getBundle("br.thinkgrowth.libraries.exceptions.messages");
+public abstract class BaseException extends RuntimeException {
+    private static final ResourceBundle messages = ResourceBundle.getBundle("messages");
 
     private String key;
 
-    public BaseException() {
+    protected BaseException() {
         super();
     }
 
-    public BaseException(String key, Throwable cause) {
+    protected BaseException(String key, Throwable cause) {
         super(cause);
         this.key = key;
     }
 
-    public BaseException(String key, String message) {
+    protected BaseException(String key, String message) {
         super(message);
         this.key = key;
     }
 
-    public BaseException(String key, String message, Throwable cause) {
+    protected BaseException(String key, String message, Throwable cause) {
         super(message, cause);
         this.key = key;
     }
 
-    public BaseException(String key, String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    protected BaseException(String key, String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
         this.key = key;
     }
 
-    public BaseException(String key) {
+    protected BaseException(String key) {
         super(messages.getString(key));
         this.key = key;
     }

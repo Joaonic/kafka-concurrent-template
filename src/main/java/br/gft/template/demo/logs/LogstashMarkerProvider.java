@@ -1,6 +1,5 @@
-package br.gft.template.demo.logs.marker;
+package br.gft.template.demo.logs;
 
-import br.gft.template.demo.logs.LogsDto;
 import net.logstash.logback.marker.LogstashMarker;
 import net.logstash.logback.marker.Markers;
 

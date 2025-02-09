@@ -1,4 +1,4 @@
-package br.gft.template.demo.shared.flow.config;
+package br.gft.template.demo.flow.config;
 
 
 import lombok.Data;

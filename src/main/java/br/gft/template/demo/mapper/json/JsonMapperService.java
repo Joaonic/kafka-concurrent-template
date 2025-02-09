@@ -1,7 +1,7 @@
-package br.gft.template.demo.shared.mapper.json;
+package br.gft.template.demo.mapper.json;
 
 import br.gft.template.demo.exceptions.InternalException;
-import br.gft.template.demo.shared.mapper.MapperService;
+import br.gft.template.demo.mapper.MapperService;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.MappingIterator;
 import com.fasterxml.jackson.databind.ObjectMapper;

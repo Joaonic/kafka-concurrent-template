@@ -1,4 +1,4 @@
-package br.gft.template.demo.shared.mapper;
+package br.gft.template.demo.mapper;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.MappingIterator;

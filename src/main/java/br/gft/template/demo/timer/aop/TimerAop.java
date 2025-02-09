@@ -1,8 +1,8 @@
-package br.gft.template.demo.shared.timer.aop;
+package br.gft.template.demo.timer.aop;
 
 import br.gft.template.demo.logs.LogstashMarkerProvider;
-import br.gft.template.demo.shared.timer.Timer;
-import br.gft.template.demo.shared.utils.DurationFormatUtils;
+import br.gft.template.demo.timer.Timer;
+import br.gft.template.demo.utils.DurationFormatUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;

@@ -1,8 +1,8 @@
-package br.gft.template.demo.shared.flow;
+package br.gft.template.demo.flow;
 
 
-import br.gft.template.demo.shared.flow.config.FlowConfig;
-import br.gft.template.demo.shared.flow.config.FlowThreadContext;
+import br.gft.template.demo.flow.config.FlowConfig;
+import br.gft.template.demo.flow.config.FlowThreadContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;

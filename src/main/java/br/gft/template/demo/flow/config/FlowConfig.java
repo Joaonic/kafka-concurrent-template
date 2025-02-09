@@ -1,6 +1,6 @@
-package br.gft.template.demo.shared.flow.config;
+package br.gft.template.demo.flow.config;
 
-import br.gft.template.demo.shared.flow.FlowControl;
+import br.gft.template.demo.flow.FlowControl;
 import lombok.Data;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.autoconfigure.AutoConfiguration;

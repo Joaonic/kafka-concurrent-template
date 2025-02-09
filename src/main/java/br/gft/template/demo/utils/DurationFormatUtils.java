@@ -1,4 +1,4 @@
-package br.gft.template.demo.shared.utils;
+package br.gft.template.demo.utils;
 
 public final class DurationFormatUtils {
 
